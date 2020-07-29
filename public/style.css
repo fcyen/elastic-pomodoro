@@ -111,7 +111,9 @@ button.menu:focus {
 }
 
 .addtask {
-  width: -webkit-fill-available;
+  width: -moz-available;          
+  width: -webkit-fill-available;  
+  width: fill-available;
   margin-bottom: 5px;
   height: 3em;
   padding-left: 15px;

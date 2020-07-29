@@ -15,25 +15,51 @@ class Main extends Component {
       status: statuses.PAUSED,
       isFocusState: true,
       timeLapsed: 0, // in s
-      startTime: 0 // in ms
+      startTime: 0, // in ms
+      restDuration: props.restDuration,
     };
   }
 
-  updateTimer = () => {
-    const duration =
-      (this.state.isFocusState
-        ? this.props.focusDuration
-        : this.props.restDuration) * 60;
-    const timeLapsed = Math.floor((+new Date() - this.state.startTime) / 1000);
+  parseTime = tSecs => {
+    const mins = Math.floor(tSecs / 60).toString();
+    const secs = Math.floor(tSecs % 60).toString();
+    
+    return mins.padStart(2, '0') + ":" + secs.padStart(2, '0');
+  }
 
-    if (this.state.status === statuses.RUNNING) {
-      const isEnded = timeLapsed >= duration;
-      if (isEnded) {
-        this.setState({ status: statuses.ENDED });
+  updateTimer = () => {
+    let timeLapsed;
+    // focus state
+    // - counts up
+    // - when times up: change status to ENDED, continue counting
+    if (this.state.isFocusState) {
+      timeLapsed = Math.floor((+new Date() - this.state.startTime) / 1000);
+
+      if (this.state.status === statuses.RUNNING) {
+        const isEnded = timeLapsed >= this.props.focusDuration;
+        if (isEnded) {
+          this.setState({ status: statuses.ENDED });
+        }
       }
+      this.setState({ timeLapsed });
     }
 
-    this.setState({ timeLapsed });
+    // rest state
+    // - counts down
+    // - when times up: change status to ENDED, stop counting
+    else {
+      if (this.state.status !== statuses.ENDED) {
+        timeLapsed = this.state.restDuration - Math.floor((+new Date() - this.state.startTime) / 1000);
+        
+        const isEnded = timeLapsed <= 0;
+        if (isEnded) {
+          this.setState({ status: statuses.ENDED, timeLapsed: 0 });
+        }
+        else {
+          this.setState({ timeLapsed });
+        }
+      }
+    }
   };
 
   startTimer = () => {
@@ -68,12 +94,27 @@ class Main extends Component {
 
   handleDone = () => {
     console.log("handleDone");
+    let timeLapsed, restDuration;
+
+    // focus => rest
+    // - elastic feature
+    if (this.state.isFocusState) {
+      timeLapsed = restDuration = Math.floor(this.state.timeLapsed * (this.props.restDuration/this.props.focusDuration));
+    }
+    // rest => focus
+    // - resets rest duration
+    else {
+      timeLapsed = 0;
+      restDuration = this.props.restDuration;
+    }
+
     this.setState(prevState => {
       return {
-        timeLapsed: 0,
+        timeLapsed,
         startTime: +new Date(),
         status: statuses.RUNNING,
-        isFocusState: !prevState.isFocusState
+        isFocusState: !prevState.isFocusState,
+        restDuration,
       };
     });
     this.startTimer();
@@ -83,7 +124,7 @@ class Main extends Component {
     let timerClassName = this.state.isFocusState ? "timer timer-green" : "timer timer-red";
     return (
       <div className="main">
-        <h1 className={timerClassName}>{this.state.timeLapsed}</h1>
+        <h1 className={timerClassName}>{this.parseTime(this.state.timeLapsed)}</h1>
         <p className="main-currenttask">--- Current task ---</p>
         <hr></hr>
         <div className="main-controls-container">
@@ -106,8 +147,8 @@ class Main extends Component {
 }
 
 Main.defaultProps = {
-  focusDuration: 0.25,
-  restDuration: 0.25
+  focusDuration: 0.25 * 60,
+  restDuration: 0.25 * 60,
 };
 
 export default Main;
