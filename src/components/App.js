@@ -4,7 +4,7 @@ import Main from "./Main";
 export default function App() {
   return (
     <div className="App">
-      <Main />
+      <Main focusDuration="120" restDuration="5" />
     </div>
   );
 }

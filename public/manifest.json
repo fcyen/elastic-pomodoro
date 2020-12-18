@@ -1,0 +1,21 @@
+{
+    "name": "Flexible Pomodoro",
+    "version": "1.0",
+    "description": "A pomodoro that adjusts the rest duration based on your last focus duration.",
+    "permissions": [],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+    "browser_action": {},
+    "icons": {
+        "16": "images/get_started16.png",
+        "32": "images/get_started32.png",
+        "48": "images/get_started48.png",
+        "128": "images/get_started128.png"
+    },
+    "content_security_policy": "script-src 'self' 'sha256-/gj0aKJ9bv9OxIr8bO+soFPaqqymDiyiQ/z4cltGpGQ='; object-src 'self'",  
+    "manifest_version": 2
+}

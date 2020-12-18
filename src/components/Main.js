@@ -20,15 +20,47 @@ class Main extends Component {
     };
   }
 
+  // ---------------------------
+  // helper functions
+  // ---------------------------
+
+  notify = msg => {
+    if (!window.Notification) {
+      console.log('Browser does not support notifications.');
+    } 
+    else {
+      if (Notification.permission === 'granted') {  // check if permission is already granted
+        let notify = new Notification(msg);
+      } 
+      else {
+        Notification.requestPermission().then(p => {  // request permission from user
+          if (p === 'granted') {
+            let notify = new Notification(msg);
+          } else {
+            console.log('User blocked notifications.');
+          }
+        }).catch(err => {
+          console.error(err);
+        });
+      }
+    }
+  }
+
   parseTime = tSecs => {
     const mins = Math.floor(tSecs / 60).toString();
     const secs = Math.floor(tSecs % 60).toString();
     
     return mins.padStart(2, '0') + ":" + secs.padStart(2, '0');
   }
+  
 
+  // ---------------------------
+  // event handling functions
+  // ---------------------------
+  
   updateTimer = () => {
     let timeLapsed;
+    
     // focus state
     // - counts up
     // - when times up: change status to ENDED, continue counting
@@ -38,6 +70,8 @@ class Main extends Component {
       if (this.state.status === statuses.RUNNING) {
         const isEnded = timeLapsed >= this.props.focusDuration;
         if (isEnded) {
+          document.title = "Time's Up!";
+          this.notify("Time to rest :)");
           this.setState({ status: statuses.ENDED });
         }
       }
@@ -53,12 +87,18 @@ class Main extends Component {
         
         const isEnded = timeLapsed <= 0;
         if (isEnded) {
+          this.notify("Back to work!");
           this.setState({ status: statuses.ENDED, timeLapsed: 0 });
         }
         else {
           this.setState({ timeLapsed });
         }
       }
+    }
+
+    // update extension icon badge
+    if (timeLapsed%60 == 0) {
+      window.chrome.runtime.sendMessage({ time: String(timeLapsed/60) }, () => {});
     }
   };
 
@@ -95,6 +135,8 @@ class Main extends Component {
   handleDone = () => {
     console.log("handleDone");
     let timeLapsed, restDuration;
+    
+    document.title = 'Pomodoro';
 
     // focus => rest
     // - elastic feature
@@ -147,8 +189,8 @@ class Main extends Component {
 }
 
 Main.defaultProps = {
-  focusDuration: 0.25 * 60,
-  restDuration: 0.25 * 60,
+  focusDuration: 25 * 60,
+  restDuration: 5 * 60,
 };
 
 export default Main;
