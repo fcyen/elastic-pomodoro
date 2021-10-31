@@ -1,0 +1,159 @@
+* {
+  font-family: "Barlow", sans-serif;
+  color: #2c2c2c;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 450px;
+  height: 450px;
+}
+
+.menu {
+  font-family: "Barlow", sans-serif;
+  font-size: 18px;
+  border: none;
+  background-color: white;
+  margin-left: 25px;
+}
+
+.menu:hover {
+  color: #0026bf;
+}
+
+.menu:focus {
+  color: #5b73d4;
+  outline: 0 solid white;
+  font-weight: 500;
+}
+
+#menu {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+}
+
+.main {
+  position: fixed;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  text-align: center;
+}
+
+.timer {
+  font-size: 150px;
+  font-family: "Advent Pro", sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.timer-red {
+  background: -webkit-linear-gradient(#1a1a1a 40%, rgba(255, 0, 0, 0.5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.timer-green {
+  background: -webkit-linear-gradient(#1a1a1a 40%, rgba(140, 255, 100, 0.5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.main-currenttask {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.main hr {
+  border-top: 1px solid #2c2c2c;
+}
+
+.main-controls-container {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.main-control-left {
+  grid-column: 3;
+  justify-self: center;
+}
+
+.main-control-right {
+  grid-column: 6;
+  justify-self: center;
+}
+
+.main-control {
+  cursor: pointer;
+}
+
+.hide {
+  display: none;
+}
+
+#tasklist {
+  position: fixed;
+  top: 65%;
+  bottom: 0;
+  left: 30%;
+  width: 40%;
+  overflow: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  font-size: 14px;
+}
+
+#tasklist::-webkit-scrollbar {
+  display: none;
+}
+
+.addtask {
+  width: -moz-available;
+  width: -webkit-fill-available;
+  width: fill-available;
+  margin-bottom: 5px;
+  height: 3em;
+  padding-left: 15px;
+  font-size: 13px;
+  font-weight: 150;
+  color: #b6b6b6;
+  border: 2px solid #ececec;
+  border-radius: 3px;
+}
+
+.addtask:focus {
+  border: 2px solid #7a7a7a;
+  color: #000;
+}
+
+p.futuretask {
+  line-height: 3em;
+  background-color: #ececec;
+  margin: 0;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  padding-left: 15px;
+  color: #7a7a7a;
+}
+
+.disabled {
+  color: gray;
+  opacity: 35%;
+  cursor: default;
+}
+
+#attribute {
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  color: lightgray;
+  font-size: 8px;
+}

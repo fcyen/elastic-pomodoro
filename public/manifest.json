@@ -1,0 +1,20 @@
+{
+    "name": "Flexible Pomodoro",
+    "version": "1.0",
+    "description": "A pomodoro that adjusts the rest duration based on your last focus duration.",
+    "manifest_version": 3,
+    "permissions": ["storage", "activeTab", "scripting"],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon" : {
+            "16": "images/clock_16.png",
+            "32": "images/clock_32.png",
+            "64": "images/clock_64.png"
+        }
+    },
+    "icons": {
+        "16": "images/clock_16.png",
+        "32": "images/clock_32.png",
+        "64": "images/clock_64.png"
+    }
+}
