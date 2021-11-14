@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LeftControl from "./LeftControl";
 import RightControl from "./RightControl";
+import TaskList from './TaskList';
 
 export const statuses = {
   RUNNING: 0,
@@ -17,6 +18,7 @@ class Main extends Component {
       timeLapsed: 0, // in s
       startTime: 0, // in ms
       restDuration: props.restDuration,
+      currentTask: '',
     };
   }
 
@@ -162,12 +164,18 @@ class Main extends Component {
     this.startTimer();
   };
 
+  updateCurrentTask(task) {
+    this.setState({
+      currentTask: task,
+    })
+  }
+
   render() {
     let timerClassName = this.state.isFocusState ? "timer timer-green" : "timer timer-red";
     return (
       <div className="main">
         <h1 className={timerClassName}>{this.parseTime(this.state.timeLapsed)}</h1>
-        <p className="main-currenttask">--- Current task ---</p>
+        <p className="main-currenttask">{this.state.currentTask}</p>
         <hr></hr>
         <div className="main-controls-container">
           <LeftControl
@@ -183,6 +191,7 @@ class Main extends Component {
           />
         </div>
         <p>{this.state.isFocusState ? "focus" : "rest"}</p>
+        <TaskList updateCurrentTask={t => this.updateCurrentTask(t)}/>
       </div>
     );
   }

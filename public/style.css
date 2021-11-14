@@ -99,7 +99,7 @@ body {
   display: none;
 }
 
-#tasklist {
+#tasklist-container {
   position: fixed;
   top: 65%;
   bottom: 0;
@@ -134,7 +134,7 @@ body {
   color: #000;
 }
 
-p.futuretask {
+li.futuretask {
   line-height: 3em;
   background-color: #ececec;
   margin: 0;
@@ -142,6 +142,12 @@ p.futuretask {
   border-radius: 3px;
   padding-left: 15px;
   color: #7a7a7a;
+  text-align: left;
+  list-style-type: none;
+}
+
+li.activetask {
+  background-color: #C9E5FF;
 }
 
 .disabled {
