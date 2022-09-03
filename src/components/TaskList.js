@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import TaskItem from './TaskItem';
 
 class TaskList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasks: [],
+            tasks: [], // list of task contents
             activeTaskId: 0,
         }
     }
@@ -33,6 +34,14 @@ class TaskList extends Component {
         this.props.updateCurrentTask(content);
     }
 
+    moveToNextItem(id, content) {
+        if (id < this.state.tasks.length) { // not the last task
+            const newId = id + 1;
+            const newContent = this.state.tasks[newId];
+            this.updateActiveTaskId(newId, newContent);
+        }
+    }
+
     render() {
         const { tasks, activeTaskId } = this.state;
         const { updateCurrentTask } = this.props;
@@ -45,13 +54,18 @@ class TaskList extends Component {
                     className="addtask" 
                     placeholder="Add task" 
                 ></input>
-                <ul id="tasklist">
-                    {tasks.map((content, index) => <li 
-                        key={index}
-                        className={"futuretask " + ((index==activeTaskId) ? "activetask" : "")}
-                        onClick={() => this.updateActiveTaskId(index, content)}
-                    >{content}</li>)}
-                </ul>
+                <div id="tasklist">
+                    {tasks.map((content, index) =>
+                        <TaskItem 
+                            key={index}
+                            id={index} 
+                            content={content}
+                            isActive={index==activeTaskId}
+                            updateActiveTaskId={() => this.updateActiveTaskId(index, content)}
+                            moveToNextItem={() => this.moveToNextItem(index, content)}
+                        />
+                    )}
+                </div>
             </div>
         )
     }
