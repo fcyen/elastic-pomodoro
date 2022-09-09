@@ -1,34 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+
 import TaskItem from './TaskItem';
+import { addTask, selectActiveTaskId, selectTasks } from "../redux/tasksSlice";
 
 function TaskList(props) {
-    const [tasks, setTasks] = useState([]);
-    const [activeTaskId, setActiveTaskId] = useState(-1);
-
-    const updateActiveTaskId = (id, content) => {
-        setActiveTaskId(id);
-        props.updateCurrentTask(content);
-    }
-
-    const moveToNextItem = (id) => {
-        if (id < tasks.length) { // not the last task
-            const newId = id + 1;
-            const newContent = tasks[newId];
-            updateActiveTaskId(newId, newContent);
-        }
-    }
+    const dispatch = useAppDispatch();
+    
+    const tasks = useAppSelector(selectTasks);
+    const activeTaskId = useAppSelector(selectActiveTaskId);
 
     const handleEnter = e => {
         if (e.key === "Enter") {
             const taskInput = e.target;
-            // if it's the first task added, update the current task too
-            if (tasks.length === 0) {
-                props.updateCurrentTask(taskInput.value);
-            }
-            setTasks(tasks.concat(taskInput.value));
+            dispatch(addTask(taskInput.value));
             taskInput.value = '';
         }
-    };
+    }
 
     useEffect(() => {
         const taskInput = document.getElementById("tasklist-input");
@@ -47,14 +35,13 @@ function TaskList(props) {
                 placeholder="Add task" 
             ></input>
             <div id="tasklist">
-                {tasks.map((content, index) =>
+                {tasks.map((task) =>
                     <TaskItem
-                        key={index}
-                        id={index}
-                        content={content}
-                        isActive={index==activeTaskId}
-                        updateActiveTaskId={() => updateActiveTaskId(index, content)}
-                        moveToNextItem={() => moveToNextItem(index, content)}
+                        key={task.id}
+                        id={task.id}
+                        content={task.content}
+                        isActive={task.id===activeTaskId}
+                        isCompleted={task.isCompleted}
                     />
                 )}
             </div>

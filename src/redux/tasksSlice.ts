@@ -18,14 +18,23 @@ const initialState: TasksState = {
     allIds: [],
     activeId: -1,
 };
+let nextTaskId: number = 0;
 
 export const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
-        addTask: (state, action: PayloadAction<TaskDetails>) => {
-            state.allIds.push(action.payload.id);
-            state.byId.push(action.payload);
+        addTask: (state, action: PayloadAction<string>) => {
+            if (nextTaskId === 0) {
+                state.activeId = nextTaskId;
+            }
+            state.allIds.push(nextTaskId);
+            state.byId.push({ 
+                id: nextTaskId,
+                content: action.payload,
+                isCompleted: false, 
+            });
+            nextTaskId++;
         },
         toggleTaskIsCompleted: (state, action: PayloadAction<number>) => {
             const idx = state.allIds.indexOf(action.payload);
@@ -41,10 +50,18 @@ export const tasksSlice = createSlice({
 export const { 
     addTask, 
     toggleTaskIsCompleted, 
-    updateActiveTask 
+    updateActiveTask
 } = tasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.byId;
 export const selectActiveTaskId = (state: RootState) => state.tasks.activeId;
+export const selectActiveTaskContent = (state: RootState) => {
+    const { activeId, allIds, byId } = state.tasks;
+    if (activeId != -1) {
+        const idx = allIds.indexOf(activeId);
+        return byId[idx].content;
+    }
+    return "";
+};
 
 export default tasksSlice.reducer;

@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import { selectActiveTaskContent } from "../redux/tasksSlice";
 import LeftControl from "./LeftControl";
 import RightControl from "./RightControl";
 import TaskList from './TaskList';
@@ -18,7 +21,6 @@ class Main extends Component {
       timeLapsed: 0, // in s
       startTime: 0, // in ms
       restDuration: props.restDuration,
-      currentTask: '',
     };
   }
 
@@ -164,18 +166,13 @@ class Main extends Component {
     this.startTimer();
   };
 
-  updateCurrentTask(task) {
-    this.setState({
-      currentTask: task,
-    })
-  }
-
   render() {
     let timerClassName = this.state.isFocusState ? "timer timer-green" : "timer timer-red";
+
     return (
       <div className="main">
         <h1 className={timerClassName}>{this.parseTime(this.state.timeLapsed)}</h1>
-        <p className="main-currenttask">{this.state.currentTask}</p>
+        <p className="main-currenttask">{this.props.activeTaskContent}</p>
         <hr></hr>
         <div className="main-controls-container">
           <LeftControl
@@ -191,7 +188,7 @@ class Main extends Component {
           />
         </div>
         <p>{this.state.isFocusState ? "focus" : "rest"}</p>
-        <TaskList updateCurrentTask={t => this.updateCurrentTask(t)}/>
+        <TaskList />
       </div>
     );
   }
@@ -200,6 +197,11 @@ class Main extends Component {
 Main.defaultProps = {
   focusDuration: 25 * 60,
   restDuration: 5 * 60,
+  activeTaskContent: "",
 };
 
-export default Main;
+const mapStateToProps = (state) => ({
+  activeTaskContent: selectActiveTaskContent(state),
+});
+
+export default connect(mapStateToProps)(Main);

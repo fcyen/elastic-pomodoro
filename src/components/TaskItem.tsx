@@ -1,5 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
+import { useAppDispatch } from "../redux/hooks";
+import { toggleTaskIsCompleted, updateActiveTask } from "../redux/tasksSlice";
 
 const StyledTaskItem = styled.div<TaskItemProps>`
     line-height: 3em;
@@ -22,32 +24,24 @@ export interface ITaskItem {
     id: number,
     content: string,
     isActive: boolean,
-    updateActiveTaskId: any,
-    moveToNextItem: () => void
+    isCompleted: boolean,
 }
 
 function TaskItem(props: ITaskItem) {
-    let isCompleted: boolean = false;
-    const { content, isActive, updateActiveTaskId } = props;
-
-    const handleCheck = () => {
-        isCompleted = !isCompleted;
-        if (isCompleted) {
-            props.moveToNextItem();
-        }
-    }
+    const dispatch = useAppDispatch();
+    const { id, content, isActive, isCompleted } = props;
 
     return (
         <StyledTaskItem 
             isActive={isActive}
-            onClick={updateActiveTaskId}
+            onClick={() => dispatch(updateActiveTask(id))}
             completed={isCompleted}
         >
             <input 
                 value={"test"} 
                 type="checkbox" 
                 style={{ marginRight: '10px' }} 
-                onChange={handleCheck}
+                onChange={() => dispatch(toggleTaskIsCompleted(id))}
             />
             {content}
         </StyledTaskItem>
