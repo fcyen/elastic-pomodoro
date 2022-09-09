@@ -40,8 +40,10 @@ class TopNav extends Component {
   render() {
     return (
         <div id="menu">
-            <button className="menu">Completed</button>
-            <button className="menu">Stats</button> 
+            {/* Hiding these two buttons while the implementation hasn't been done */}
+            <button className="menu" style={{ display: "none" }}>Completed</button>
+            <button className="menu" style={{ display: "none" }}>Stats</button> 
+            
             <Tooltip
               trigger="click"
               animation="shift"
