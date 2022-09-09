@@ -40,6 +40,15 @@ export const tasksSlice = createSlice({
             const idx = state.allIds.indexOf(action.payload);
             const taskToToggle = state.byId[idx];
             taskToToggle.isCompleted = !taskToToggle.isCompleted;
+
+            // move on to the next item if task has been completed
+            if (taskToToggle.isCompleted) {
+                const nextTask = state.byId.find(task => 
+                    !task.isCompleted && task.id != action.payload 
+                    // isCompleted for the task hasn't been written yet, so it is still an uncompleted task
+                );
+                state.activeId = nextTask?.id || -1;
+            }
         },
         updateActiveTask: (state, action: PayloadAction<number>) => {
             state.activeId = action.payload;
