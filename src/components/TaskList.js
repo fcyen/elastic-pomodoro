@@ -1,74 +1,65 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import TaskItem from './TaskItem';
 
-class TaskList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tasks: [], // list of task contents
-            activeTaskId: 0,
-        }
-    }
-    
-    componentDidMount() {
-        const taskInput = document.getElementById("tasklist-input");
-        taskInput.addEventListener("keyup", e => {
-            if (e.key === "Enter") {
-                // if it's the first task added, update the current task too
-                if (this.state.tasks.length === 0) {
-                    this.props.updateCurrentTask(taskInput.value);
-                }
+function TaskList(props) {
+    const [tasks, setTasks] = useState([]);
+    const [activeTaskId, setActiveTaskId] = useState(-1);
 
-                this.setState(prevState => ({
-                    tasks: [...prevState.tasks, taskInput.value]
-                }));
-                taskInput.value = '';
-            }
-        });
+    const updateActiveTaskId = (id, content) => {
+        setActiveTaskId(id);
+        props.updateCurrentTask(content);
     }
 
-    updateActiveTaskId(id, content) {
-        this.setState({
-            activeTaskId: id,
-        });
-        this.props.updateCurrentTask(content);
-    }
-
-    moveToNextItem(id, content) {
-        if (id < this.state.tasks.length) { // not the last task
+    const moveToNextItem = (id) => {
+        if (id < tasks.length) { // not the last task
             const newId = id + 1;
-            const newContent = this.state.tasks[newId];
-            this.updateActiveTaskId(newId, newContent);
+            const newContent = tasks[newId];
+            updateActiveTaskId(newId, newContent);
         }
     }
 
-    render() {
-        const { tasks, activeTaskId } = this.state;
-        const { updateCurrentTask } = this.props;
+    const handleEnter = e => {
+        if (e.key === "Enter") {
+            const taskInput = e.target;
+            // if it's the first task added, update the current task too
+            if (tasks.length === 0) {
+                props.updateCurrentTask(taskInput.value);
+            }
+            setTasks(tasks.concat(taskInput.value));
+            taskInput.value = '';
+        }
+    };
 
-        return (
-            <div id="tasklist-container">
-                <input 
-                    id="tasklist-input" 
-                    type="text" 
-                    className="addtask" 
-                    placeholder="Add task" 
-                ></input>
-                <div id="tasklist">
-                    {tasks.map((content, index) =>
-                        <TaskItem 
-                            key={index}
-                            id={index} 
-                            content={content}
-                            isActive={index==activeTaskId}
-                            updateActiveTaskId={() => this.updateActiveTaskId(index, content)}
-                            moveToNextItem={() => this.moveToNextItem(index, content)}
-                        />
-                    )}
-                </div>
+    useEffect(() => {
+        const taskInput = document.getElementById("tasklist-input");
+        taskInput.addEventListener("keyup", handleEnter);
+        return () => {
+            taskInput.removeEventListener("keyup", handleEnter);
+        }
+    }, [handleEnter]);
+
+    return (
+        <div id="tasklist-container">
+            <input 
+                id="tasklist-input" 
+                type="text" 
+                className="addtask" 
+                placeholder="Add task" 
+            ></input>
+            <div id="tasklist">
+                {tasks.map((content, index) =>
+                    <TaskItem
+                        key={index}
+                        id={index}
+                        content={content}
+                        isActive={index==activeTaskId}
+                        updateActiveTaskId={() => updateActiveTaskId(index, content)}
+                        moveToNextItem={() => moveToNextItem(index, content)}
+                    />
+                )}
             </div>
-        )
-    }
+        </div>
+    );
 }
 
 export default TaskList;

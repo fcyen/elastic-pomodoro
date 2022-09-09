@@ -18,7 +18,7 @@ interface TaskItemProps {
     readonly completed: boolean;
 }
 
-export default interface ITaskItem {
+export interface ITaskItem {
     id: number,
     content: string,
     isActive: boolean,
@@ -26,38 +26,32 @@ export default interface ITaskItem {
     moveToNextItem: () => void
 }
 
-export default class TaskItem extends React.Component<ITaskItem, {}> {
-    completed: boolean;
+function TaskItem(props: ITaskItem) {
+    let isCompleted: boolean = false;
+    const { content, isActive, updateActiveTaskId } = props;
 
-    constructor(props: ITaskItem) {
-        super(props);
-        this.completed = false;
-        this.handleCheck = this.handleCheck.bind(this);
-    }
-
-    handleCheck() {
-        this.completed = !this.completed;
-        if (this.completed === true) {
-            this.props.moveToNextItem();
+    const handleCheck = () => {
+        isCompleted = !isCompleted;
+        if (isCompleted) {
+            props.moveToNextItem();
         }
     }
 
-    render() {
-        const { content, isActive, updateActiveTaskId } = this.props;
-        return (
-            <StyledTaskItem 
-                isActive={isActive}
-                onClick={updateActiveTaskId}
-                completed={this.completed}
-            >
-                <input 
-                    value={"test"} 
-                    type="checkbox" 
-                    style={{ marginRight: '10px' }} 
-                    onChange={this.handleCheck}
-                />
-                {content}
-            </StyledTaskItem>
-        );
-    }
+    return (
+        <StyledTaskItem 
+            isActive={isActive}
+            onClick={updateActiveTaskId}
+            completed={isCompleted}
+        >
+            <input 
+                value={"test"} 
+                type="checkbox" 
+                style={{ marginRight: '10px' }} 
+                onChange={handleCheck}
+            />
+            {content}
+        </StyledTaskItem>
+    );
 }
+
+export default TaskItem;
