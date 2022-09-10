@@ -38,7 +38,7 @@ function TaskItem(props: ITaskItem) {
             completed={isCompleted}
         >
             <input 
-                value={"test"} 
+                checked={isCompleted} 
                 type="checkbox" 
                 style={{ marginRight: '10px' }} 
                 onChange={() => dispatch(toggleTaskIsCompleted(id))}
