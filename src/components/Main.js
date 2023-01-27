@@ -24,14 +24,16 @@ class Main extends Component {
     };
 
     // Chrome extension badge settings
-    chrome.action.setBadgeBackgroundColor({color: [255, 150, 150, 255]});    
-    // chrome.action.setBadgeTextColor({color: [0, 0, 0, 255]});
+    if (chrome) {
+      chrome.action.setBadgeBackgroundColor({color: [255, 150, 150, 255]});    
+      // chrome.action.setBadgeTextColor({color: [0, 0, 0, 255]});
+    }
   }
-  
+
   // ---------------------------
   // helper functions
   // ---------------------------
-  
+
   notify = msg => {
     if (!window.Notification) {
       console.log('Browser does not support notifications.');
@@ -74,7 +76,7 @@ class Main extends Component {
     // - when times up: change status to ENDED, continue counting
     if (this.state.isFocusState) {
       timeLapsed = Math.floor((+new Date() - this.state.startTime) / 1000);
-      
+
       if (this.state.status === statuses.RUNNING) {
         const isEnded = timeLapsed >= this.props.focusDuration;
         if (isEnded) {
@@ -85,7 +87,7 @@ class Main extends Component {
       }
       this.setState({ timeLapsed });
     }
-    
+
     // rest state
     // - counts down
     // - when times up: change status to ENDED, stop counting
@@ -99,17 +101,21 @@ class Main extends Component {
           this.setState({ status: statuses.ENDED, timeLapsed: 0 });
           
           // hide extension action badge
-          chrome.action.setBadgeText({text: ''});
+          if (chrome) {
+            chrome.action.setBadgeText({text: ''});
+          }
         }
         else {
           this.setState({ timeLapsed });
 
           // display extension action badge
-          const { mins, secs } = this.parseTime(this.state.timeLapsed);
-          if (mins !== '00') {
-            chrome.action.setBadgeText({text: mins + 'm'});
-          } else {
-            chrome.action.setBadgeText({text: secs + 's'});
+          if (chrome) {
+            const { mins, secs } = this.parseTime(this.state.timeLapsed);
+            if (mins !== '00') {
+              chrome.action.setBadgeText({text: mins + 'm'});
+            } else {
+              chrome.action.setBadgeText({text: secs + 's'});
+            }
           }
         }
       }
@@ -132,6 +138,12 @@ class Main extends Component {
     console.log("handleResume");
     const newStartTime = +new Date() - this.state.timeLapsed * 1000;
     this.setState({ startTime: newStartTime, status: statuses.RUNNING });
+
+    // Set extension icon to green when timer is running in focus state
+    if (chrome && this.state.isFocusState) {
+      chrome.action.setIcon({ path: '../public/images/clock_16_green.png'});
+    }
+    
     this.startTimer();
   };
 
@@ -139,6 +151,11 @@ class Main extends Component {
     console.log("handlePause");
     this.stopTimer();
     this.setState({ status: statuses.PAUSED });
+
+    // Set extension icon to black
+    if (chrome) {
+      chrome.action.setIcon({ path: '../public/images/clock_16.png'});
+    }
   };
 
   handleReset = () => {
@@ -156,12 +173,21 @@ class Main extends Component {
     // - elastic feature
     if (this.state.isFocusState) {
       timeLapsed = restDuration = Math.floor(this.state.timeLapsed * (this.props.restDuration/this.props.focusDuration));
+      
+      if (chrome) {
+        chrome.action.setIcon({ path: '../public/images/clock_16.png'});
+      }
     }
     // rest => focus
     // - resets rest duration
     else {
       timeLapsed = 0;
       restDuration = this.props.restDuration;
+
+      if (chrome) {
+        chrome.action.setIcon({ path: '../public/images/clock_16_green.png'});
+        chrome.action.setBadgeText({ text: '' });
+      }
     }
 
     this.setState(prevState => {
@@ -173,6 +199,7 @@ class Main extends Component {
         restDuration,
       };
     });
+
     this.startTimer();
   };
 
