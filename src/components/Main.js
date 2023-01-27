@@ -22,12 +22,16 @@ class Main extends Component {
       startTime: 0, // in ms
       restDuration: props.restDuration,
     };
-  }
 
+    // Chrome extension badge settings
+    chrome.action.setBadgeBackgroundColor({color: [255, 150, 150, 255]});    
+    // chrome.action.setBadgeTextColor({color: [0, 0, 0, 255]});
+  }
+  
   // ---------------------------
   // helper functions
   // ---------------------------
-
+  
   notify = msg => {
     if (!window.Notification) {
       console.log('Browser does not support notifications.');
@@ -49,15 +53,15 @@ class Main extends Component {
       }
     }
   }
-
+  
   parseTime = tSecs => {
     const mins = Math.floor(tSecs / 60).toString();
     const secs = Math.floor(tSecs % 60).toString();
     
-    return mins.padStart(2, '0') + ":" + secs.padStart(2, '0');
+    return { mins: mins.padStart(2, '0'), secs: secs.padStart(2, '0') };
   }
   
-
+  
   // ---------------------------
   // event handling functions
   // ---------------------------
@@ -70,7 +74,7 @@ class Main extends Component {
     // - when times up: change status to ENDED, continue counting
     if (this.state.isFocusState) {
       timeLapsed = Math.floor((+new Date() - this.state.startTime) / 1000);
-
+      
       if (this.state.status === statuses.RUNNING) {
         const isEnded = timeLapsed >= this.props.focusDuration;
         if (isEnded) {
@@ -81,7 +85,7 @@ class Main extends Component {
       }
       this.setState({ timeLapsed });
     }
-
+    
     // rest state
     // - counts down
     // - when times up: change status to ENDED, stop counting
@@ -93,17 +97,23 @@ class Main extends Component {
         if (isEnded) {
           this.notify("Back to work!");
           this.setState({ status: statuses.ENDED, timeLapsed: 0 });
+          
+          // hide extension action badge
+          chrome.action.setBadgeText({text: ''});
         }
         else {
           this.setState({ timeLapsed });
+
+          // display extension action badge
+          const { mins, secs } = this.parseTime(this.state.timeLapsed);
+          if (mins !== '00') {
+            chrome.action.setBadgeText({text: mins + 'm'});
+          } else {
+            chrome.action.setBadgeText({text: secs + 's'});
+          }
         }
       }
     }
-
-    // update extension icon badge
-    // if (timeLapsed%60 === 0) {
-    //   window.chrome.runtime.sendMessage({ time: String(timeLapsed/60) }, () => {});
-    // }
   };
 
   startTimer = () => {
@@ -168,10 +178,11 @@ class Main extends Component {
 
   render() {
     let timerClassName = this.state.isFocusState ? "timer timer-green" : "timer timer-red";
+    const { mins, secs } = this.parseTime(this.state.timeLapsed);
 
     return (
       <div className="main">
-        <h1 className={timerClassName}>{this.parseTime(this.state.timeLapsed)}</h1>
+        <h1 className={timerClassName}>{mins + ':' + secs}</h1>
         <p className="main-currenttask">{this.props.activeTaskContent}</p>
         <hr></hr>
         <div className="main-controls-container">
