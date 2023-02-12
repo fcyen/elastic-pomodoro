@@ -1,3 +1,5 @@
+/*global chrome*/
+
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
@@ -24,7 +26,7 @@ class Main extends Component {
     };
 
     // Chrome extension badge settings
-    if (chrome) {
+    if (chrome && chrome.action) {
       chrome.action.setBadgeBackgroundColor({color: [255, 150, 150, 255]});    
       // chrome.action.setBadgeTextColor({color: [0, 0, 0, 255]});
     }
@@ -101,7 +103,7 @@ class Main extends Component {
           this.setState({ status: statuses.ENDED, timeLapsed: 0 });
           
           // hide extension action badge
-          if (chrome) {
+          if (chrome && chrome.action) {
             chrome.action.setBadgeText({text: ''});
           }
         }
@@ -109,7 +111,7 @@ class Main extends Component {
           this.setState({ timeLapsed });
 
           // display extension action badge
-          if (chrome) {
+          if (chrome && chrome.action) {
             const { mins, secs } = this.parseTime(this.state.timeLapsed);
             if (mins !== '00') {
               chrome.action.setBadgeText({text: mins + 'm'});
@@ -140,7 +142,7 @@ class Main extends Component {
     this.setState({ startTime: newStartTime, status: statuses.RUNNING });
 
     // Set extension icon to green when timer is running in focus state
-    if (chrome && this.state.isFocusState) {
+    if (chrome && chrome.action && this.state.isFocusState) {
       chrome.action.setIcon({ path: '../public/images/clock_16_green.png'});
     }
     
@@ -153,7 +155,7 @@ class Main extends Component {
     this.setState({ status: statuses.PAUSED });
 
     // Set extension icon to black
-    if (chrome) {
+    if (chrome && chrome.action) {
       chrome.action.setIcon({ path: '../public/images/clock_16.png'});
     }
   };
@@ -174,7 +176,7 @@ class Main extends Component {
     if (this.state.isFocusState) {
       timeLapsed = restDuration = Math.floor(this.state.timeLapsed * (this.props.restDuration/this.props.focusDuration));
       
-      if (chrome) {
+      if (chrome && chrome.action) {
         chrome.action.setIcon({ path: '../public/images/clock_16.png'});
       }
     }
@@ -184,7 +186,7 @@ class Main extends Component {
       timeLapsed = 0;
       restDuration = this.props.restDuration;
 
-      if (chrome) {
+      if (chrome && chrome.action) {
         chrome.action.setIcon({ path: '../public/images/clock_16_green.png'});
         chrome.action.setBadgeText({ text: '' });
       }

@@ -24,7 +24,7 @@ function TaskList(props) {
         return () => {
             taskInput.removeEventListener("keyup", handleEnter);
         }
-    }, [handleEnter]);
+    });
 
     return (
         <div id="tasklist-container">
