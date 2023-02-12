@@ -21,8 +21,6 @@ const initialState: TasksState = {
     nextTaskId: 0,
 };
 
-// let nextTaskId: number = 0;
-
 export const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
@@ -56,6 +54,9 @@ export const tasksSlice = createSlice({
         },
         updateActiveTask: (state, action: PayloadAction<number>) => {
             state.activeId = action.payload;
+        },
+        deleteAllTasks: () => {
+            return initialState;
         }
     }
 });
@@ -63,7 +64,8 @@ export const tasksSlice = createSlice({
 export const { 
     addTask, 
     toggleTaskIsCompleted, 
-    updateActiveTask
+    updateActiveTask,
+    deleteAllTasks,
 } = tasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.byId;

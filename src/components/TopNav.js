@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import 'react-tippy/dist/tippy.css'
 import { Tooltip } from 'react-tippy';
+import { connect } from "react-redux";
 
 import { DURATIONS } from "../constants";
+import { deleteAllTasks } from "../redux/tasksSlice";
 
 
 class Settings extends Component {
@@ -95,6 +97,9 @@ class TopNav extends Component {
                   <br />
                   <br />
                   <button onClick={() => this.onDurationSubmit()}>Submit</button>
+                  <br />
+                  <br />
+                  <button onClick={() => this.props.deleteAllTasks()}>Clear tasks</button>
                 </div>
               }
             >
@@ -105,4 +110,8 @@ class TopNav extends Component {
   }
 }
 
-export default TopNav;
+const mapDispatchToProps = (dispatch) => ({
+  deleteAllTasks: () => dispatch(deleteAllTasks()),
+})
+
+export default connect(null, mapDispatchToProps)(TopNav);
