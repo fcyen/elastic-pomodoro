@@ -11,20 +11,24 @@ interface TasksState {
     byId: TaskDetails[]
     allIds: number[],
     activeId: number,
+    nextTaskId: number,
 }
 
 const initialState: TasksState = {
     byId: [],
     allIds: [],
     activeId: -1,
+    nextTaskId: 0,
 };
-let nextTaskId: number = 0;
+
+// let nextTaskId: number = 0;
 
 export const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
         addTask: (state, action: PayloadAction<string>) => {
+            let nextTaskId = state.nextTaskId;
             if (nextTaskId === 0) {
                 state.activeId = nextTaskId;
             }
@@ -34,7 +38,7 @@ export const tasksSlice = createSlice({
                 content: action.payload,
                 isCompleted: false, 
             });
-            nextTaskId++;
+            state.nextTaskId++;
         },
         toggleTaskIsCompleted: (state, action: PayloadAction<number>) => {
             const idx = state.allIds.indexOf(action.payload);
@@ -44,7 +48,7 @@ export const tasksSlice = createSlice({
             // move on to the next item if task has been completed
             if (taskToToggle.isCompleted) {
                 const nextTask = state.byId.find(task => 
-                    !task.isCompleted && task.id != action.payload 
+                    !task.isCompleted && task.id !== action.payload 
                     // isCompleted for the task hasn't been written yet, so it is still an uncompleted task
                 );
                 state.activeId = nextTask?.id || -1;
@@ -66,7 +70,7 @@ export const selectTasks = (state: RootState) => state.tasks.byId;
 export const selectActiveTaskId = (state: RootState) => state.tasks.activeId;
 export const selectActiveTaskContent = (state: RootState) => {
     const { activeId, allIds, byId } = state.tasks;
-    if (activeId != -1) {
+    if (activeId !== -1) {
         const idx = allIds.indexOf(activeId);
         return byId[idx].content;
     }
