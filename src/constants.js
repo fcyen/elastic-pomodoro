@@ -1,4 +1,4 @@
 export const DURATIONS = {
-    FOCUS: 120,
-    REST: 60
+    FOCUS: 25 * 60,
+    REST: 5 * 60
 }
