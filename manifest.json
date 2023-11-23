@@ -3,7 +3,7 @@
     "version": "1.0",
     "description": "A pomodoro that adjusts the rest duration based on your last focus duration.",
     "manifest_version": 3,
-    "permissions": ["storage", "tabs", "scripting"],
+    "permissions": ["tabs"],
     "action": {
         "default_icon" : {
             "16": "./public/images/clock_16.png",
